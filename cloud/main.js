@@ -47,7 +47,8 @@ Parse.Cloud.define("HomePage", function(request, response) {
                 promises.push(query.find());
             }*/
 
-            return Parse.Promise.all(promises);
+            //return Parse.Promise.all(promises);
+            return 'SUCCESS MESSAGE';
         })
         .then((realItemsList) => {
             let i = 0;
