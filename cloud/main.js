@@ -11,7 +11,7 @@ Parse.Cloud.define("HomePage", function(request, response) {
             let promises = [];
 
             //  Preparing results.
-            results.forEach((item) => {
+            [...results].forEach((item) => {
                 const refObjectId = item.get('refObjectId');
                 const info = refObjectId.split(':');
 
@@ -55,7 +55,7 @@ Parse.Cloud.define("HomePage", function(request, response) {
             for (const table in tableToObjectIds) {
                 const items = realItemsList[i++];
 
-                items.forEach((item) => {
+                [...items].forEach((item) => {
                     const refObjectId = table + ':' + item.get('objectId');
                     const fields = item.attributes;
 
