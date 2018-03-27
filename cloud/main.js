@@ -6,11 +6,10 @@ Parse.Cloud.define("HomePage", function(request, response) {
     const query = new Parse.Query("Home");
 
     //  Executing the query.
-    try {
     query.find();
         .then((results) => {
             let promises = [];
-
+/*
             //  Preparing results.
             results.forEach((item) => {
                 const refObjectId = item.get('refObjectId');
@@ -46,13 +45,13 @@ Parse.Cloud.define("HomePage", function(request, response) {
 
                 //  Sending the request and saving the promise in promises array.
                 promises.push(query.find());
-            }
+            }*/
 
             return Parse.Promise.all(promises);
         })
         .then((realItemsList) => {
             let i = 0;
-
+/*
             for (const table in tableToObjectIds) {
                 const items = realItemsList[i++];
 
@@ -65,14 +64,11 @@ Parse.Cloud.define("HomePage", function(request, response) {
                         Object.assign(item.attributes, toOverride);
                     }
                 });
-            }
+            }*/
 
             response.success(realItemsList);
         })
         .catch(() => {
             response.error("Couldn't get information for home page.");
         });
-    } catch(err) {
-        response.success('ERROR MESSAGE: ' + err.message);
-    }
 });
