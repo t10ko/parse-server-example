@@ -9,6 +9,7 @@ Parse.Cloud.define("HomePage", (request, response) => {
     query.find()
         .then((results) => {
             let promises = [];
+
             //  Preparing results.
             results.forEach((item) => {
                 const refObjectId = item.get('refObjectId');
@@ -68,6 +69,6 @@ Parse.Cloud.define("HomePage", (request, response) => {
             response.success(realItemsList);
         })
         .catch((err) => {
-            response.error("Couldn't get information for home page: " + err.message);
+            response.error("Couldn't get information for home page.");
         });
 });
