@@ -2,13 +2,13 @@ Parse.Cloud.define("HomePage", function(request, response) {
     let tableToObjectIds = {};
     let fieldsToOverride = {};
 
-    response.success('DONE BABE');
-/*
     //  Getting all fields from Home class.
     const query = new Parse.Query("Home");
 
     //  Executing the query.
-    query.find()
+    query.find();
+    response.success('DONE BABE');
+/*
         .then((results) => {
             let promises = [];
 
