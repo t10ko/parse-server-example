@@ -52,14 +52,14 @@ Parse.Cloud.define("HomePage", (request, response) => {
         .then((realItemsList) => {
             let i = 0;
 
+            //  Overrinding field values of given items with the ones which are in Home class.
             for (const table in tableToObjectIds) {
                 const items = realItemsList[i++];
 
                 items.forEach((item) => {
                     const refObjectId = table + ':' + item.get('objectId');
-                    const fields = item.attributes;
-
                     const toOverride = fieldsToOverride[refObjectId];
+
                     if (toOverride) {
                         Object.assign(item.attributes, toOverride);
                     }
