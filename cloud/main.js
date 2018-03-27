@@ -2,6 +2,9 @@ Parse.Cloud.define("HomePage", function(request, response) {
     let tableToObjectIds = {};
     let fieldsToOverride = {};
 
+    Parse.serverURL = "https://ari-app.herokuapp.com/";
+    Parse.initialize('ari-app', 'parse-server', '2412ggmpTIOKO!((#');
+
     //  Getting all fields from Home class.
     const homeClass = Parse.Object.extend("Home");
     const query = new Parse.Query(homeClass);
