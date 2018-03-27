@@ -1,4 +1,4 @@
-Parse.Cloud.define("HomePage", function(request, response) {
+Parse.Cloud.define("HomePage", (request, response) => {
     let tableToObjectIds = {};
     let fieldsToOverride = {};
 
