@@ -3,7 +3,8 @@ Parse.Cloud.define("HomePage", function(request, response) {
     let fieldsToOverride = {};
 
     //  Getting all fields from Home class.
-    const query = new Parse.Query("Home");
+    const homeClass = Parse.Object.extend("Home");
+    const query = new Parse.Query(homeClass);
 
     //  Executing the query.
     query.find();
