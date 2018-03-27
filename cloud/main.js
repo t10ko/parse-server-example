@@ -6,9 +6,8 @@ Parse.Cloud.define("HomePage", function(request, response) {
     const query = new Parse.Query("Home");
 
     //  Executing the query.
+    try {
     query.find();
-    response.success('DONE BABE');
-/*
         .then((results) => {
             let promises = [];
 
@@ -72,5 +71,8 @@ Parse.Cloud.define("HomePage", function(request, response) {
         })
         .catch(() => {
             response.error("Couldn't get information for home page.");
-        });*/
+        });
+    } catch(err) {
+        response.success('ERROR MESSAGE: ' . err.message);
+    }
 });
