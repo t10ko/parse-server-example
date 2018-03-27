@@ -2,6 +2,8 @@ Parse.Cloud.define("HomePage", function(request, response) {
     let tableToObjectIds = {};
     let fieldsToOverride = {};
 
+    response.success('DONE BABE');
+/*
     //  Getting all fields from Home class.
     const query = new Parse.Query("Home");
 
@@ -11,7 +13,7 @@ Parse.Cloud.define("HomePage", function(request, response) {
             let promises = [];
 
             //  Preparing results.
-            [...results].forEach((item) => {
+            results.forEach((item) => {
                 const refObjectId = item.get('refObjectId');
                 const info = refObjectId.split(':');
 
@@ -55,7 +57,7 @@ Parse.Cloud.define("HomePage", function(request, response) {
             for (const table in tableToObjectIds) {
                 const items = realItemsList[i++];
 
-                [...items].forEach((item) => {
+                items.forEach((item) => {
                     const refObjectId = table + ':' + item.get('objectId');
                     const fields = item.attributes;
 
@@ -70,5 +72,5 @@ Parse.Cloud.define("HomePage", function(request, response) {
         })
         .catch(() => {
             response.error("Couldn't get information for home page.");
-        });
+        });*/
 });
