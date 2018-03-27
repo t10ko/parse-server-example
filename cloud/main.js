@@ -73,6 +73,6 @@ Parse.Cloud.define("HomePage", function(request, response) {
             response.error("Couldn't get information for home page.");
         });
     } catch(err) {
-        response.success('ERROR MESSAGE: ' . err.message);
+        response.success('ERROR MESSAGE: ' + err.message);
     }
 });
