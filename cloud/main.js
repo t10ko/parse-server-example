@@ -72,3 +72,28 @@ Parse.Cloud.define("HomePage", (request, response) => {
             response.error("Couldn't get information for home page.");
         });
 });
+
+Parse.Cloud.define("FoodPage", (request, response) => {
+    let tableToObjectIds = {};
+    let fieldsToOverride = {};
+
+    //  Getting all items from Food class.
+    const query = new Parse.Query("Food");
+
+    //  Trying to include relations.
+    query.include("restaurants");
+    query.include("tags");
+    query.include("subtitle");
+
+    //  Querying only one item from Food class.
+    query.equalTo("objectId", "HZzRmf3HXg");
+
+    //  Executing the query.
+    query.find()
+        .then((results) => {
+            response.success(results);
+        })
+        .catch((err) => {
+            response.error("Couldn't get information for home page.");
+        });
+});
