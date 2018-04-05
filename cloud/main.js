@@ -66,7 +66,7 @@ Parse.Cloud.define('HomePage', (request, response) => {
                 const table = info[0];
                 const objectId = info[1];
 
-                //  Creating container for items for a particular table.
+                //  Creating container for items ids for a particular table.
                 if (!tableToObjectIds[table]) {
                     tableToObjectIds[table] = [];
                 }
@@ -87,8 +87,9 @@ Parse.Cloud.define('HomePage', (request, response) => {
                     }
                 });
 
-                //  Preparing results from gotten from given table.
-                request.then((subResults) => {
+                //  Preparing results gotten from given table.
+                //  Saving it into promises container.
+                promises.push(request.then((subResults) => {
                     return subResults.map((item) => {
                         const refObjectId = table + ':' + item.objectId;
                         const toOverride = valuesToOverride[refObjectId];
@@ -99,23 +100,20 @@ Parse.Cloud.define('HomePage', (request, response) => {
 
                         return item;
                     });
-                })
-
-                //  Sending the request and saving the promise in promises array.
-                promises.push(request);
+                }));
             }
 
             return Promise.all(promises);
         })
         .then((allResults) => {
 
-            //  Inlining results.
+            //  Inlining nested array.
             let results = [];
             allResults.forEach((subResults) => {
                 results.push(...subResults);
             });
 
-            //  Printing results.
+            //  Done!
             response.success(results);
         })
         .catch((err) => {
@@ -125,8 +123,6 @@ Parse.Cloud.define('HomePage', (request, response) => {
 
 ['Food', 'Music', 'Stories', 'Phrases', 'Map'].forEach((classname) => {
     Parse.Cloud.define(classname + 'Page', (request, response) => {
-
-        //  Executing the query.
         db.find(classname)
             .then((results) => {
                 response.success(results);
