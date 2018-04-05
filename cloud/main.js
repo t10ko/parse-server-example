@@ -123,14 +123,16 @@ Parse.Cloud.define('HomePage', (request, response) => {
         });
 });
 
-Parse.Cloud.define('FoodPage', (request, response) => {
+['Food', 'Music', 'Stories', 'Phrases', 'Map'].forEach((classname) => {
+    Parse.Cloud.define(classname + 'Page', (request, response) => {
 
-    //  Executing the query.
-    db.find('Food')
-        .then((results) => {
-            response.success(results);
-        })
-        .catch((err) => {
-            response.error('Couldn\'t get information for food page.', err);
-        });
+        //  Executing the query.
+        db.find(classname)
+            .then((results) => {
+                response.success(results);
+            })
+            .catch((err) => {
+                response.error('Couldn\'t get information for ' + classname.toLowerCase() + ' page.', err);
+            });
+    });
 });
