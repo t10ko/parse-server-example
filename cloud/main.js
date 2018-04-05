@@ -1,7 +1,6 @@
 'use strict';
 
-const fixResults = require('../lib/fix-results');
-const db = require('../lib/queries');
+const db = require('../lib/db');
 
 db.configure({
     Home: {
