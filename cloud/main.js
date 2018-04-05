@@ -1,18 +1,63 @@
-Parse.Cloud.define("HomePage", (request, response) => {
-    let tableToObjectIds = {};
-    let fieldsToOverride = {};
+'use strict';
 
-    //  Getting all items from Home class.
-    const query = new Parse.Query("Home");
+const fixResults = require('../lib/fix-results');
+const db = require('../lib/queries');
+
+db.configure({
+    Home: {
+        pointers: ['subtitle']
+    },
+    Food: {
+        relations: ['tags', 'restaurants'],
+        pointers: ['subtitle']
+    },
+    Restaurants: {
+        relations: ['places']
+    },
+    Tags: {
+        pointers: ['color']
+    },
+    Map: {
+        pointers: ['place']
+    },
+    Music: {
+        relations: ['tags'],
+        pointers: ['subtitle']
+    },
+    Phrases: {
+        relations: ['tags'],
+        pointers: ['subtitle']
+    },
+    Stories: {
+        relations: ['tags'],
+        pointers: ['place', 'subtitle']
+    },
+});
+
+function getMap(keys, values) {
+    let result = {};
+
+    keys.forEach((key) => {
+        result[key] = values[key];
+    });
+
+    return result;
+}
+
+Parse.Cloud.define('HomePage', (request, response) => {
+    const fieldsToOverride = ['subtitle'];
 
     //  Executing the query.
-    query.find()
+    db.find('Home')
         .then((results) => {
             let promises = [];
 
+            let tableToObjectIds = {};
+            let valuesToOverride = {};
+
             //  Preparing results.
             results.forEach((item) => {
-                const refObjectId = item.get('refObjectId');
+                const refObjectId = item.refObjectId;
                 const info = refObjectId.split(':');
 
                 if (info.length != 2) {
@@ -23,77 +68,70 @@ Parse.Cloud.define("HomePage", (request, response) => {
                 const objectId = info[1];
 
                 //  Creating container for items for a particular table.
-                let tableItems = tableToObjectIds[table] || (tableToObjectIds[table] = []);
+                if (!tableToObjectIds[table]) {
+                    tableToObjectIds[table] = [];
+                }
+
+                //  Saving the needed item id.
+                tableToObjectIds[table].push(objectId);
 
                 //  Keeping custom information of Home class to override fields 
                 //  which come from different tables but are specified here as well.
-                const customFields = Object.assign({}, item.attributes);
-                delete customFields.refObjectId;
-
-                //  Saving the needed item id.
-                tableItems.push(objectId);
-                fieldsToOverride[refObjectId] = customFields;
+                valuesToOverride[refObjectId] = getMap(fieldsToOverride, item);
             });
 
             //  Getting original items.
             for (const table in tableToObjectIds) {
-                const objectIds = tableToObjectIds[table];
-                const query = new Parse.Query(table);
-
-                //  Getting only needed items from this table.
-                query.containedIn("objectId", objectIds);
-
-                //  Sending the request and saving the promise in promises array.
-                promises.push(query.find());
-            }
-
-            return Parse.Promise.all(promises);
-        })
-        .then((realItemsList) => {
-            let i = 0;
-
-            //  Overrinding field values of given items with the ones which are in Home class.
-            for (const table in tableToObjectIds) {
-                const items = realItemsList[i++];
-
-                items.forEach((item) => {
-                    const refObjectId = table + ':' + item.get('objectId');
-                    const toOverride = fieldsToOverride[refObjectId];
-
-                    if (toOverride) {
-                        Object.assign(item.attributes, toOverride);
+                const request = db.find(table, {
+                    filters: {
+                        objectId: tableToObjectIds[table]
                     }
                 });
+
+                //  Preparing results from gotten from given table.
+                request.then((subResults) => {
+                    return subResults.map((item) => {
+                        const refObjectId = table + ':' + item.objectId;
+                        const toOverride = valuesToOverride[refObjectId];
+
+                        if (toOverride) {
+                            Object.assign(item, toOverride);
+                        }
+
+                        return item;
+                    });
+                })
+
+                //  Sending the request and saving the promise in promises array.
+                promises.push(request);
             }
 
-            response.success(realItemsList);
+            return Promise.all(promises);
+        })
+        .then((allResults) => {
+
+            //  Inlining results.
+            let results = [];
+            allResults.forEach((subResults) => {
+                results.push(...subResults);
+            });
+
+            //  Printing results.
+            response.success(results);
         })
         .catch((err) => {
-            response.error("Couldn't get information for home page.");
+            response.error('Couldn\'t get information for home page.', err);
         });
 });
 
-Parse.Cloud.define("FoodPage", (request, response) => {
-    let tableToObjectIds = {};
-    let fieldsToOverride = {};
-
-    //  Getting all items from Food class.
-    const query = new Parse.Query("Food");
-
-    //  Trying to include relations.
-    query.include("restaurants");
-    query.include("tags");
-    query.include("subtitle");
-
-    //  Querying only one item from Food class.
-    query.equalTo("objectId", "HZzRmf3HXg");
+Parse.Cloud.define('FoodPage', (request, response) => {
 
     //  Executing the query.
-    query.find()
+    db.find('Food')
         .then((results) => {
             response.success(results);
         })
         .catch((err) => {
-            response.error("Couldn't get information for home page.");
+            response.error('Couldn\'t get information for food page.', err);
         });
 });
