@@ -29,7 +29,7 @@ db.configure({
     },
     Stories: {
         relations: ['tags'],
-        pointers: ['place', 'subtitle']
+        pointers: ['place', 'subtitle', 'talk']
     },
 });
 
